@@ -304,6 +304,45 @@ function actualizarEstadisticas() {
 }
 
 
+function exportarArchivo(data, fileName, fileType) {
+  const blob = new Blob([data], { type: fileType });
+  const url = URL.createObjectURL(blob);
+  const a = Object.assign(document.createElement('a'), {
+    href: url,
+    download: fileName
+  });
+
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+
+function exportarJSON() {
+  const data = JSON.stringify(cursos, null, 2);
+  exportarArchivo(data, 'cursos.json', 'application/json');
+}
+
+
+function exportarCSV() {
+  let csvContent = 'Nombre del Curso, Profesor, Estudiantes\n';
+
+  cursos.forEach(curso => {
+    csvContent += `"${curso.nombre}","${curso.profesor}",`;
+
+    const estudiantesStr = curso.estudiantes.map(est =>
+      `${est.nombre} (${est.edad} años, Nota: ${est.nota})`
+    ).join(' | ');
+
+    csvContent += `"${estudiantesStr}"\n`;
+  });
+
+  exportarArchivo(csvContent, 'cursos.csv', 'text/csv');
+}
+
+
+
 
 
 
